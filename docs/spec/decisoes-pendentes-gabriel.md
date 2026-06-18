@@ -379,6 +379,12 @@ Estados visuais do score nos cards de vinho (cross A3):
 Telas afetadas: wine, marketplace, home/descobrir bloco Pra voce, carta-matches,
 comparar-vinhos, scanner-result-v2, porque-combina, harmoniza-resultados.
 
+REVISAO GABRIEL (06/2026, sessao match score): pesos revistos pra 70/30 sem
+editorial (decisao D33 do Bloco 6 novo). Curador fixo descartado por inviavel.
+Ver Bloco 6 (D34 a D39) pra equacao final, pesos por dimensao, MAP_CORPO e
+servico implementado. Sliders do backoffice viram 2 (paladar e popularidade)
+somando 100 percent.
+
 ### D20, 5 templates de evento F5
 
 Contexto: 5 templates propostos pro wizard de evento.
@@ -772,6 +778,105 @@ Decisao necessaria:
 3. Definir local de publicacao no app (cross M09 Aprenda e A1 Bloco 6 do
    Descobri).
 Origem: validacao por epico.
+
+---
+
+## Bloco 6, Match score revisto (jun/2026)
+
+Sessao dedicada a fechar a equacao concreta do match paladar x vinho.
+Substitui parcialmente D19 (mantem o componente visual e os thresholds, troca
+a equacao e os pesos do score Descobrir).
+
+Implementacao canonica: src/services/match-score.js + testes unitarios em
+src/services/match-score.test.mjs (16 casos, todos verdes).
+
+### D34, Equacao final do paladar score
+
+Contexto: o cruzamento entre paladar do user (quiz, 0 a 100 em 5 dimensoes) e
+ficha tecnica do vinho (admin do comerciante, 1 a 5 nos eixos numericos + corpo
+categorico) precisava de equacao concreta versionada no codigo.
+Decisao necessaria: aprovar a equacao final com pesos por dimensao.
+
+RESPOSTA GABRIEL (06/2026): APROVADO.
+
+paladar_score = max(0, round(100 - soma(|vinho_norm[k] - user[k]| x peso[k]) / 6.0))
+
+Onde k vai por acidez, tanino, frutado, docura e corpo. Normalizacao do vinho
+de 1 a 5 pra 0 a 100: (valor - 1) x 25. Corpo categorico mapeado por
+MAP_CORPO.
+
+### D35, Pesos por dimensao
+
+Contexto: as 5 dimensoes nao tem o mesmo poder discriminante.
+Decisao necessaria: aprovar pesos.
+
+RESPOSTA GABRIEL (06/2026): APROVADO.
+
+Acidez 1.5, Tanino 1.5, Frutado 1.0, Docura 1.0, Corpo 1.0. Soma 6.0.
+Justificativa: acidez e tanino sao os eixos mais discriminantes do paladar
+tecnico, errar neles afasta mais o user.
+
+### D36, MAP_CORPO (categorico do vinho pra 0 a 100)
+
+Contexto: o admin do comerciante tem Corpo como dropdown categorico, nao
+escala 1 a 5 como os outros eixos.
+Decisao necessaria: aprovar mapeamento.
+
+RESPOSTA GABRIEL (06/2026): APROVADO.
+
+Leve 25, Medio 50, Medio-encorpado 70, Encorpado 90. Comerciante precisa
+manter dropdown com exatamente essas 4 opcoes pra cruzamento bater.
+
+### D37, Score Descobrir, 70 percent paladar + 30 percent popularidade
+
+Contexto: D19 anterior tinha aprovado 50/30/20 (paladar/popularidade/editorial).
+Reavaliacao: editorial 20 percent exigia curador fixo dando nota pra todos os
+vinhos. Gabriel considerou inviavel (muito trabalho operacional).
+Decisao necessaria: como redistribuir os 20 percent do editorial.
+
+RESPOSTA GABRIEL (06/2026): APROVADO 70 percent paladar + 30 percent
+popularidade. Sem editorial fixo. Equacao da popularidade:
+popularidade = min(100, registros_60d x 2 + avaliacoes_4_5_estrelas_60d x 1.5).
+Sem um dos sinais, recai pro disponivel. Sem nenhum, vinho nao entra na
+recomendacao (cai pro fallback Curiosity card editorial, que continua humano
+mas sem nota numerica).
+
+### D38, Filtro "Pra iniciantes" removido do Descobri
+
+Contexto: chip de categoria Pra iniciantes no Descobri vinha do mock. Filtro
+nao tinha logica implementada e ia contra a recomendacao baseada no paladar
+real do user.
+Decisao necessaria: cria criterio editorial pra essa categoria ou tira.
+
+RESPOSTA GABRIEL (06/2026): TIRA. Vai contra o que os especialistas dizem e
+contra o gosto do paladar do user. Filtro especialista tambem nao sera criado.
+Categorias restantes no Descobri: Em alta, Ate R$ 50, Brasileiros, Chilenos,
+Especiais.
+
+### D39, Nivel do user no onboarding (iniciante/intermediario/avancado)
+
+Contexto: coletado em screens-quiz-nivel.jsx, salvo em window.__tcUserLevel,
+nao usado em lugar nenhum hoje.
+Decisao necessaria: tirar do onboarding, manter so pra microcopy, ou conectar
+em alguma regra concreta.
+
+RESPOSTA GABRIEL (06/2026): MANTEM TUDO COMO ESTA, NAO MEXE AGORA. Decisao
+adiada pra sprint futura.
+
+### Renomeacao alcool para frutado (executada)
+
+Contexto: a chave do objeto paladar era alcool mas o label exibido era Frutado
+desde sempre. Confundia dev e QA. Backlog PALADAR-RENAME-01.
+
+EXECUTADO (06/2026, junto com sessao match score):
+- data.jsx: MOCK_USER.paladar + 8 entradas de MOCK_WINES.perfil + pergunta 5
+  do QUIZ_QUESTIONS, todos com chave frutado em vez de alcool. Pergunta 5
+  passa a ter axis "Frutado" em vez de "Alcool".
+- screens-quiz.jsx: PaladarRadar e classifyPaladar usam chave frutado.
+- f16_01_MatchScoreBadge.jsx: ProfileComparisonBars usa label Frutado.
+- screens-event-wizard-p3.jsx: deixa de duplicar a equacao, delega ao
+  servico src/services/match-score.js.
+- spec M03 03-meu-paladar.md atualizada.
 
 ---
 

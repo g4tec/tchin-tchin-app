@@ -1,6 +1,6 @@
 # Módulo 03 — Meu Paladar (Quiz sensorial)
 
-> Quiz **contextual** de 5 perguntas que calcula o **DNA de paladar 5D** do usuário (Doçura, Acidez, Tanino, Corpo, Frutado/Álcool) e o classifica em 1 de 6 perfis. Alimenta o Descobrir, a busca, o Harmoniza, o radar do Perfil e a comparação de paladar.
+> Quiz **contextual** de 5 perguntas que calcula o **DNA de paladar 5D** do usuário (Doçura, Acidez, Tanino, Corpo, Frutado) e o classifica em 1 de 6 perfis. Alimenta o Descobrir, a busca, o Harmoniza, o radar do Perfil e a comparação de paladar.
 > **Fonte de verdade:** telas em `src/legacy/screens-quiz.jsx` (`QuizScreen`, `QuizResultScreen`, `PaladarRadar`, `classifyPaladar`) + perguntas em `src/legacy/data.jsx` (`QUIZ_QUESTIONS`). Doc funcional: **Sprint 11-13 Épico T1**.
 > **Épicos/US:** US-PALADAR-01 (quiz 5 perguntas), US-PALADAR-02 (radar 5D), US-PALADAR-03 (classificação em perfil), US-PALADAR-04 (reuso contextual em Descobrir/Harmoniza/Compare).
 
@@ -39,10 +39,10 @@ _P1 default · P1 selecionado · P2 · P3 · P4 · P5:_
 | 2 | **Acidez** | "Tempero: apimentado ou suave?" | "Sua relação com sabores intensos." | 🌶️ Apimentado, sabor marcado · **80** | 🥗 Suave, sem ardência · **25** |
 | 3 | **Tanino** | "Fruta: laranja ou morango maduro?" | "Pense no sabor que mais te atrai." | 🍊 Laranja · **70** | 🍓 Morango maduro · **30** |
 | 4 | **Corpo** | "Chocolate: meio amargo ou ao leite?" | "Aquele que você comeria sem pensar." | 🍫 Meio amargo · **75** | 🥛 Ao leite · **35** |
-| 5 | **Álcool/Frutado** | "Bebida: prefere mais leve ou encorpada?" | "Pense no peso da bebida na boca." | 💧 Mais leve, refrescante · **30** | 🥃 Mais encorpada, intensa · **80** |
+| 5 | **Frutado** | "Bebida: prefere mais leve ou encorpada?" | "Pense no peso da bebida na boca." | 💧 Mais leve, refrescante · **30** | 🥃 Mais encorpada, intensa · **80** |
 
 **Interação:** estado `pending` evita que o tap rebote — só consolida em `answers` ao clicar "Continuar"; voltar para uma pergunta já respondida re-popula a opção; barra de progresso anima a transição.
-**Estado/persistência:** `answers: { docura, acidez, tanino, corpo, alcool }` em state local; ao concluir, stash em `window.__tcUserPaladar` e passa pra `quiz-result`.
+**Estado/persistência:** `answers: { docura, acidez, tanino, corpo, frutado }` em state local; ao concluir, stash em `window.__tcUserPaladar` e passa pra `quiz-result`.
 **Analytics (recomendado):** `paladar_quiz_start { from }`, `paladar_quiz_step { n, value }`, `paladar_quiz_complete { paladar }`, `paladar_quiz_abandon { atStep }`.
 > **⚠️ DIVERGÊNCIA — back na P1 vai a `cadastro`:** legado de quando o quiz vinha no onboarding. Agora o quiz é contextual → back deveria honrar `params.returnTo` (ou `home` como fallback). **Recomendação:** ajustar a rota de back; **decisão do Gabriel**.
 > **⚠️ DIVERGÊNCIA — só 2 opções por pergunta:** o doc original previa escala Likert (3 ou 5 pontos). A tela usa **binário** (15/75, 80/25, etc.) por simplicidade HP3. **Recomendação:** manter binário no MVP; futuro: oferecer "meio termo" via Likert para usuários que pedirem refinar (Backlog **PALADAR-LIKERT-01**).
@@ -61,7 +61,7 @@ _P1 default · P1 selecionado · P2 · P3 · P4 · P5:_
 - Top bar: back + bloco central "ETAPA FINAL · 5 de 5" (overline p700 + label mono n800).
 - H1 Fraunces 28 **"Seu DNA de Paladar"** + sub Geist 14 **"Calculamos seu perfil sensorial em 5 dimensões"**.
 - **Radar 5D** (`PaladarRadar`, 280×280) com:
-  - Eixos (sentido horário a partir do topo): **Acidez** (top), **Tanino** (top-right), **Corpo** (bottom-right), **Frutado** (bottom-left, mapeia para a chave `alcool`), **Doçura** (top-left).
+  - Eixos (sentido horário a partir do topo): **Acidez** (top), **Tanino** (top-right), **Corpo** (bottom-right), **Frutado** (bottom-left), **Doçura** (top-left).
   - Grid de pentágonos a 20/40/60/80/100 (n200 stroke 1px) + 5 raios (n200).
   - Polígono do usuário: fill p700 @ 22% + stroke p700 2.5px + dots p700 nos vértices; animação `tcDrawIn` 700ms ao entrar.
   - Labels: nome do eixo (Inter 12 bold n800) + valor numérico abaixo (Inter 11 p700).
@@ -85,15 +85,56 @@ _P1 default · P1 selecionado · P2 · P3 · P4 · P5:_
 
 > **⚠️ DIVERGÊNCIA — fluxo legado em `Continuar`:** sem `returnTo`, a CTA manda para `tela-intencao` (etapa 3 do onboarding antigo). Hoje o quiz é contextual → deveria voltar para o origem (Descobrir/Harmoniza/Adega-Paladar/Compare) ou home. **Recomendação:** corrigir o fallback para `home` (não `tela-intencao`); honrar `returnTo` quando vier do contexto. **Gabriel decide.**
 
-> **⚠️ DIVERGÊNCIA — eixo "Frutado" mapeia para `alcool`:** o campo no objeto paladar é `alcool` mas o label exibido é **"Frutado"**. Isso confunde dev/QA. **Recomendação:** renomear o campo para `frutado` (mais alinhado com a marca; "Álcool" como label causa estigma). Migration de dados quando ligar o backend. Backlog: **PALADAR-RENAME-01**.
-
 > **⚠️ DIVERGÊNCIA — 6 perfis com regras encadeadas:** a ordem de teste cria zonas estranhas (ex.: doçura 60 + acidez 50 cai em Elegante, não em Doce, porque acidez > 45). **Recomendação:** validar com QA/UX um conjunto de paladares-limite; eventualmente fazer um teste de **distância vetorial** ao centro de cada perfil (mais robusto que cadeia de `if`). Backlog: **PALADAR-CLASSIFY-V2**.
 
 **Status:** ✅
 
 ---
 
-## 03.3 Reuso contextual do paladar (entry points + overlays)
+## 03.3 Algoritmo de match (paladar do user × ficha técnica do vinho)
+
+Decisões fechadas com o Gabriel em **jun/2026** (D30–D35 em [`decisoes-pendentes-gabriel.md`](./decisoes-pendentes-gabriel.md)). Implementação canônica em **[`src/services/match-score.js`](../../src/services/match-score.js)** + testes em `src/services/match-score.test.mjs` (rodar com `node`).
+
+**Inputs.**
+- `user[k]` em **0–100** nas 5 dimensões `{ acidez, tanino, frutado, docura, corpo }` (do quiz; ver §03.1).
+- `wine[k]` na ficha técnica do comerciante:
+  - `acidez, tanino, frutado, docura` em **1–5** (inteiro).
+  - `corpo` **categórico**: `'Leve' | 'Médio' | 'Médio-encorpado' | 'Encorpado'`.
+
+**Normalização do vinho para 0–100.**
+- Eixos numéricos: `vinho_norm[k] = (vinho[k] − 1) × 25` → 1=0, 2=25, 3=50, 4=75, 5=100.
+- Corpo categórico via `MAP_CORPO`:
+  - `Leve = 25`, `Médio = 50`, `Médio-encorpado = 70`, `Encorpado = 90`.
+
+**Pesos por dimensão** (Acidez e Tanino discriminam mais o paladar técnico):
+
+| Dimensão | Peso |
+|---|---:|
+| Acidez | 1.5 |
+| Tanino | 1.5 |
+| Frutado | 1.0 |
+| Doçura | 1.0 |
+| Corpo | 1.0 |
+| **Σ** | **6.0** |
+
+**Equação do score de paladar (0–100):**
+
+```
+paladar_score = max(0, round(100 − Σ(|vinho_norm[k] − user[k]| × peso[k]) / 6.0))
+```
+
+**Tier de exibição** (mantido do componente atual `MatchScoreBadge`):
+- `≥ 75` → high (verde)
+- `≥ 50` → medium (amarelo)
+- `< 50` → low (cinza)
+
+**Heurística de compatibilidade com mock legado:** `normalizeWine` detecta valor `> 5` e assume escala 0–100 (mock antigo em `data.jsx`), para não quebrar telas que ainda usam o `perfil` mockado.
+
+> **Nota — escala de Likert no quiz.** As respostas hoje são binárias por dimensão (15/75, 80/25, etc.). Se virar Likert 5 pontos (PALADAR-LIKERT-01), o output continua em 0–100 e a equação não muda.
+
+---
+
+## 03.4 Reuso contextual do paladar (entry points + overlays)
 
 O paladar não é só uma tela — é um **componente transversal** lido por:
 - **Descobrir / `home/descobrir`** — usa `paladar` no scoring de recomendação; sem paladar, renderiza `DescobrirHomeFirstTime` com card "Faça o quiz pra recomendações precisas" → `quiz { returnTo: 'descobrir' }`.
@@ -103,6 +144,7 @@ O paladar não é só uma tela — é um **componente transversal** lido por:
 - **Editar perfil / `editar-perfil-paladar`** — atalho direto para refazer ou ver o resultado atual.
 - **Compare / `perfil-comparar-paladar`** — sobrepõe 2 radares (eu + outro usuário) com legenda colorida.
 - **Treine seu Paladar / Módulo 08** — usa o paladar como baseline + atualiza progressivamente (Backlog **PALADAR-DRIFT-01**: deriva do paladar com base nas lições).
+- **Score Descobrir (Módulo 04 §4.3)** — usa `paladar_score` (peso 70%) + `popularidade` (peso 30%). Sem editorial fixo (decisão Gabriel jun/2026).
 
 > **⚠️ DIVERGÊNCIA — paladar único vs múltiplos contextos:** alguns vinhos pedem perfil "do dia" (ex.: harmonizar com sobremesa pede mais doçura). **Recomendação:** manter um único paladar canônico no perfil, mas oferecer **filtros contextuais** ("mostrar como se eu estivesse com fome de sobremesa") só no Descobrir. Backlog **PALADAR-CONTEXT-01**.
 
@@ -118,7 +160,6 @@ O paladar não é só uma tela — é um **componente transversal** lido por:
 ## Pendências de backend / decisões do Gabriel
 - **Persistir paladar** no perfil do usuário (backend) + sincronizar com `window.__tcUserPaladar`.
 - **Analytics:** ligar `paladar_quiz_*` na infra real.
-- **Migration:** renomear `alcool` → `frutado` (atual desalinhamento label vs key).
 - **Classificação v2:** trocar cadeia de `if` por distância vetorial ao centro do perfil (mais robusto).
 - **Draft + retomada:** salvar e recuperar quiz interrompido.
 - **Decisões do Gabriel:** binário vs Likert 5 pontos; back da P1 (cadastro vs home); reuso de paladar contextual ("paladar do dia").

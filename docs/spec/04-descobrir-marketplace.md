@@ -11,7 +11,21 @@
 ## 🆕 § 4.0 Decisões fechadas + Marketplace de Experiência (Gabriel, junho/2026)
 
 ### 4.0.1 Recomendação do Descobrir
-Algoritmo = **paladar (50%) + popularidade (30%) + curadoria editorial manual (20%)**. Pesos calibráveis. Backend mistura os 3 sinais e ordena por score.
+
+**Decisão jun/2026 (Gabriel):** algoritmo = **paladar (70%) + popularidade (30%)**. **Sem curadoria editorial manual** (decisão D33: "Não tem como colocar curador fixo pra ficar dando nota para tudo"). Implementação única em **[`src/services/match-score.js`](../../src/services/match-score.js)** — função `descobrirScore({ paladar, popularidade })`.
+
+**Sinal de paladar** (0–100): retornado por `paladarScore(user, wine.fichaTecnica)`. Equação completa em [`03-meu-paladar.md` §3.3](./03-meu-paladar.md#033-algoritmo-de-match-paladar-do-user--ficha-técnica-do-vinho).
+
+**Sinal de popularidade** (0–100):
+```
+popularidade = min(100, registros_60d × 2 + avaliacoes_4_5_estrelas_60d × 1.5)
+```
+- `registros_60d` = nº de vezes que o vinho foi registrado no diário nos últimos 60 dias.
+- `avaliacoes_4_5_estrelas_60d` = nº de avaliações ≥ 4 estrelas no diário nos últimos 60 dias.
+
+**Combinação final**: `descobrir_score = round(0.7 × paladar + 0.3 × popularidade)`. Sem um dos sinais, recai pro disponível. Sem nenhum, vinho não é recomendado (vai pro fallback Curiosity card editorial).
+
+**Sem chip "Pra iniciantes"** (decisão D34): tirado do hero de Categorias do Descobrir porque ia contra recomendação baseada no paladar real do user. Categorias restantes em §4.1.
 
 ### 4.0.2 Modelo de Marketplace
 - **Loja única dentro do app** — não tem link pra fora.
@@ -92,7 +106,7 @@ _Variantes documentadas no Módulo 02 (FirstTime sem paladar) e aqui (DescobrirH
   - Se `ctx.user.paladar` existe: garrafa placeholder 84×132 com gradiente p900→p700 + rótulo simulado + título do vinho (17/700) + producer/country + **MatchBadge** ("87% pra você", p700 → ambar a700) + preço (R$ 18/700) + CTA primária "Ver detalhes" (full width).
   - Se **sem paladar**: card centralizado com ícone `quiz` 26 sobre círculo p700, H3 **"Quer recomendações pra você?"**, body Geist 13 **"Faça o quiz de paladar — 5 perguntas, 2 minutos. Aí a gente sabe o que combina contigo."**, CTA primária **"Fazer quiz"** → `quiz`.
 - **Card scanner** (n0 + border n200): ícone `qr_code_scanner` sobre quadrado p700 + body "Escanear rótulo · Tire foto da garrafa e descubra seu match." → `scanner`.
-- **Categorias** (chips com emoji, flex-wrap): "Pra iniciantes 🍷", "Em alta ⭐", "Até R$ 50 💰", "Brasileiros 🇧🇷", "Chilenos 🇨🇱", "Especiais 💎". Cada um → `marketplace { filter: id }`.
+- **Categorias** (chips com emoji, flex-wrap): "Em alta ⭐", "Até R$ 50 💰", "Brasileiros 🇧🇷", "Chilenos 🇨🇱", "Especiais 💎". Cada um → `marketplace { filter: id }`. **"Pra iniciantes" foi removido em jun/2026** (decisão D34): conflitava com recomendação baseada no paladar real.
 - **Marketplace preview**: H2 "Marketplace" + link "Ver tudo →" → grid 2 colunas com `WineCard compact` (4 vinhos sorted by match) + CTA secundária "Ver mais vinhos".
 - **CuriosityCard** editorial — bloco "Uva da semana" (Tannat) com texto curto e autoria ("Sommelier Convidado · Diego Reis").
 

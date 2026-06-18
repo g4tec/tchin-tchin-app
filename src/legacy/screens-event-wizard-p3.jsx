@@ -6,6 +6,7 @@ import { Button } from './components.jsx';
 import { MOCK_USER, MOCK_WINES } from './data.jsx';
 import { readEventDraft, writeEventDraft } from './screens-event-wizard-p1.jsx';
 import { fbEvent } from './screens-wizard-confraria.jsx';
+import { paladarScore as paladarScoreService } from '../services/match-score.js';
 import { BottlePlaceholder, Icon, T } from './tokens.jsx';
 
 // Tchin Tchin — 09.03 Wizard Criar Evento, Passo 3 de 5
@@ -62,15 +63,10 @@ function suggestWinesForEvent(eventType /* degustacao | jantar | festa | visita 
 }
 
 // Similaridade entre o perfil sensorial do vinho e o paladar do organizador (#8).
+// Delegado ao serviço único em src/services/match-score.js.
 function paladarScore(wine, paladar) {
-  if (!wine.perfil || !paladar) return wine.match || 0;
-  const keys = ['docura', 'acidez', 'tanino', 'corpo', 'alcool'];
-  let diff = 0, n = 0;
-  keys.forEach((k) => {
-    if (wine.perfil[k] != null && paladar[k] != null) { diff += Math.abs(wine.perfil[k] - paladar[k]); n++; }
-  });
-  if (!n) return wine.match || 0;
-  return Math.max(0, Math.round(100 - diff / n));
+  const s = paladarScoreService(paladar, wine.perfil);
+  return s == null ? (wine.match || 0) : s;
 }
 
 // Sugere vinhos por paladar, respeitando a faixa de preço escolhida ("na taxa").

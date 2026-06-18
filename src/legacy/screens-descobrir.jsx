@@ -21,7 +21,6 @@ function DescobrirHome({ go, ctx }) {
   const grid = sorted.slice(1, 5);
 
   const categorias = [
-    { id: 'iniciantes', label: 'Pra iniciantes', emoji: '🍷' },
     { id: 'alta',       label: 'Em alta',        emoji: '⭐' },
     { id: 'ate50',      label: 'Até R$ 50',      emoji: '💰' },
     { id: 'brasil',     label: 'Brasileiros',    emoji: '🇧🇷' },

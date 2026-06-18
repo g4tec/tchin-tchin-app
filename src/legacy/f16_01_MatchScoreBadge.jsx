@@ -348,7 +348,7 @@ function ProfileComparisonBars({ wineProfile = {}, userProfile = {} }) {
     { key: 'acidez', label: 'Acidez' },
     { key: 'tanino', label: 'Tanino' },
     { key: 'corpo',  label: 'Corpo' },
-    { key: 'alcool', label: 'Álcool' },
+    { key: 'frutado', label: 'Frutado' },
   ];
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '8px 0 16px' }}>

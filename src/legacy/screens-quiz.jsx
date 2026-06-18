@@ -10,13 +10,13 @@ import { Icon, T } from './tokens.jsx';
 
 // 5D Radar chart (the centerpiece — replaces donut)
 // Axis order: Acidez (top), Tanino (top-right), Corpo (bottom-right),
-//             Frutado (bottom-left, maps to 'alcool' key), Doçura (top-left)
+//             Frutado (bottom-left), Doçura (top-left)
 function PaladarRadar({ paladar, wine, size = 280, animate = true, showLabels = true, showWine = !!wine }) {
   const axes = [
     { key: 'acidez',  label: 'Acidez',  pos: 'top' },
     { key: 'tanino',  label: 'Tanino',  pos: 'tr' },
     { key: 'corpo',   label: 'Corpo',   pos: 'br' },
-    { key: 'alcool',  label: 'Frutado', pos: 'bl' },
+    { key: 'frutado', label: 'Frutado', pos: 'bl' },
     { key: 'docura',  label: 'Doçura',  pos: 'tl' },
   ];
   const cx = size / 2, cy = size / 2;
@@ -179,7 +179,7 @@ function QuizScreen({ go, params = {} }) {
 
 // ─── Quiz Result (radar 5D) ────────────────────────────────
 function classifyPaladar(p) {
-  const { docura = 0, acidez = 0, tanino = 0, corpo = 0, alcool = 0 } = p;
+  const { docura = 0, acidez = 0, tanino = 0, corpo = 0, frutado = 0 } = p;
   // Doce: doçura alta + acidez baixa
   if (docura >= 60 && acidez <= 45)
     return { name: 'Doce', text: 'Você curte vinhos doces e aveludados, com baixa acidez. Moscatel, Sauternes e Lambrusco Amabile vão te conquistar.' };

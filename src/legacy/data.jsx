@@ -11,18 +11,18 @@ const MOCK_USER = {
   city: 'Brasília, DF',
   joined: 'Mar 2026',
   bio: 'Sommelier amadora · organizo confrarias pequenas',
-  paladar: { docura: 25, acidez: 70, tanino: 65, corpo: 75, alcool: 60 },
+  paladar: { docura: 25, acidez: 70, tanino: 65, corpo: 75, frutado:60 },
 };
 
 const MOCK_WINES = [
-  { id: 1, name: 'Catena Malbec 2021', producer: 'Bodega Catena Zapata', country: 'Argentina', region: 'Mendoza', type: 'Tinto', price: 189.90, match: 92, perfil: { docura: 20, acidez: 65, tanino: 70, corpo: 80, alcool: 70 } },
-  { id: 2, name: 'Quinta do Crasto Reserva 2020', producer: 'Quinta do Crasto', country: 'Portugal', region: 'Douro', type: 'Tinto', price: 245.00, match: 87, perfil: { docura: 15, acidez: 70, tanino: 75, corpo: 80, alcool: 70 } },
-  { id: 3, name: 'Cloudy Bay Sauvignon Blanc', producer: 'Cloudy Bay', country: 'Nova Zelândia', region: 'Marlborough', type: 'Branco', price: 312.00, match: 64, perfil: { docura: 30, acidez: 85, tanino: 5, corpo: 35, alcool: 55 } },
-  { id: 4, name: 'Casillero del Diablo Cabernet', producer: 'Concha y Toro', country: 'Chile', region: 'Maipo', type: 'Tinto', price: 64.90, match: 71, perfil: { docura: 25, acidez: 60, tanino: 65, corpo: 70, alcool: 65 } },
-  { id: 5, name: 'Veuve Clicquot Brut', producer: 'Veuve Clicquot', country: 'França', region: 'Champagne', type: 'Espumante', price: 489.00, match: 55, perfil: { docura: 30, acidez: 75, tanino: 0, corpo: 45, alcool: 60 } },
-  { id: 6, name: 'Salentein Reserve Malbec', producer: 'Bodegas Salentein', country: 'Argentina', region: 'Uco Valley', type: 'Tinto', price: 156.00, match: 89, perfil: { docura: 22, acidez: 68, tanino: 72, corpo: 78, alcool: 68 } },
-  { id: 7, name: 'Miolo Reserva Merlot 2022', producer: 'Miolo', country: 'Brasil', region: 'Vale dos Vinhedos', type: 'Tinto', price: 72.50, match: 78, perfil: { docura: 28, acidez: 60, tanino: 55, corpo: 70, alcool: 65 } },
-  { id: 8, name: 'Casa de Vila Verde Vinho Verde', producer: 'Casa de Vila Verde', country: 'Portugal', region: 'Minho', type: 'Branco', price: 58.00, match: 48, perfil: { docura: 35, acidez: 80, tanino: 0, corpo: 30, alcool: 45 } },
+  { id: 1, name: 'Catena Malbec 2021', producer: 'Bodega Catena Zapata', country: 'Argentina', region: 'Mendoza', type: 'Tinto', price: 189.90, match: 92, perfil: { docura: 20, acidez: 65, tanino: 70, corpo: 80, frutado:70 } },
+  { id: 2, name: 'Quinta do Crasto Reserva 2020', producer: 'Quinta do Crasto', country: 'Portugal', region: 'Douro', type: 'Tinto', price: 245.00, match: 87, perfil: { docura: 15, acidez: 70, tanino: 75, corpo: 80, frutado:70 } },
+  { id: 3, name: 'Cloudy Bay Sauvignon Blanc', producer: 'Cloudy Bay', country: 'Nova Zelândia', region: 'Marlborough', type: 'Branco', price: 312.00, match: 64, perfil: { docura: 30, acidez: 85, tanino: 5, corpo: 35, frutado:55 } },
+  { id: 4, name: 'Casillero del Diablo Cabernet', producer: 'Concha y Toro', country: 'Chile', region: 'Maipo', type: 'Tinto', price: 64.90, match: 71, perfil: { docura: 25, acidez: 60, tanino: 65, corpo: 70, frutado:65 } },
+  { id: 5, name: 'Veuve Clicquot Brut', producer: 'Veuve Clicquot', country: 'França', region: 'Champagne', type: 'Espumante', price: 489.00, match: 55, perfil: { docura: 30, acidez: 75, tanino: 0, corpo: 45, frutado:60 } },
+  { id: 6, name: 'Salentein Reserve Malbec', producer: 'Bodegas Salentein', country: 'Argentina', region: 'Uco Valley', type: 'Tinto', price: 156.00, match: 89, perfil: { docura: 22, acidez: 68, tanino: 72, corpo: 78, frutado:68 } },
+  { id: 7, name: 'Miolo Reserva Merlot 2022', producer: 'Miolo', country: 'Brasil', region: 'Vale dos Vinhedos', type: 'Tinto', price: 72.50, match: 78, perfil: { docura: 28, acidez: 60, tanino: 55, corpo: 70, frutado:65 } },
+  { id: 8, name: 'Casa de Vila Verde Vinho Verde', producer: 'Casa de Vila Verde', country: 'Portugal', region: 'Minho', type: 'Branco', price: 58.00, match: 48, perfil: { docura: 35, acidez: 80, tanino: 0, corpo: 30, frutado:45 } },
 ];
 
 const MOCK_POSTS = [
@@ -111,7 +111,7 @@ const QUIZ_QUESTIONS = [
     ],
   },
   {
-    id: 'alcool', axis: 'Álcool',
+    id: 'frutado', axis: 'Frutado',
     question: 'Bebida: prefere mais leve ou encorpada?',
     hint: 'Pense no peso da bebida na boca.',
     options: [
